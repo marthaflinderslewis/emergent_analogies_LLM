@@ -4,6 +4,10 @@ import random
 import json
 import argparse
 
+random.seed(1729)
+np.random.seed(1729)
+
+
 ## Problems generated using one of the following 6 transformations:
 #
 # Successorship
@@ -59,32 +63,32 @@ import argparse
 #
 ##
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--num_permuted', help="give a number of letters in the alphabet to permute from 2 to 26", type=int)
-# args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_permuted', help="give a number of letters in the alphabet to permute from 2 to 26", type=int)
+args = parser.parse_args()
 
 #Alphabet
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
 
-# # Generate derangement
-# def k_derange(k=2, letters=letters):
-#     if k == 1:
-#         return None, letters
+# Generate derangement
+def k_derange(k=2, letters=letters):
+    if k == 1:
+        return None, letters
     
-#     to_shuffle = sorted(random.sample(range(len(letters)), k=k))
-#     shuffled = random.sample(to_shuffle, k=len(to_shuffle))
-#     not_derangement = sum([i == shuffled[to_shuffle.index(i)] for i in to_shuffle])
+    to_shuffle = sorted(random.sample(range(len(letters)), k=k))
+    shuffled = random.sample(to_shuffle, k=len(to_shuffle))
+    not_derangement = sum([i == shuffled[to_shuffle.index(i)] for i in to_shuffle])
 
-#     while not_derangement:
-#         shuffled = random.sample(to_shuffle, k=len(to_shuffle))
-#         not_derangement = sum([i == shuffled[to_shuffle.index(i)] for i in to_shuffle])
-#     shuffled_letters = [letters[i] if i not in to_shuffle else letters[shuffled[to_shuffle.index(i)]] for i in range(len(letters))]
-#     return shuffled, shuffled_letters
+    while not_derangement:
+        shuffled = random.sample(to_shuffle, k=len(to_shuffle))
+        not_derangement = sum([i == shuffled[to_shuffle.index(i)] for i in to_shuffle])
+    shuffled_letters = [letters[i] if i not in to_shuffle else letters[shuffled[to_shuffle.index(i)]] for i in range(len(letters))]
+    return shuffled, shuffled_letters
 
-# # Alphabet
-# shuffled_inds, shuffled_letters = k_derange(k=args.num_permuted, letters=letters)
-# letters = deepcopy(shuffled_letters)
+# Alphabet
+shuffled_inds, shuffled_letters = k_derange(k=args.num_permuted, letters=letters)
+letters = deepcopy(shuffled_letters)
 
 N_letters = len(letters)
 # Numbers
@@ -254,7 +258,6 @@ def gen_prob_subset(N_generalize=0, N_prob=100, standard_len=5, longer_targ_len=
             tgt = new_tgt
         # Check that problem doesn't already exist
         prob = [src, tgt]
-        print(prob)
         duplicate = False
         for p_prev in range(len(all_prob)):
             if np.array(prob, dtype="object").shape == np.array(all_prob[p_prev], dtype="object").shape:
@@ -360,11 +363,11 @@ for p in range(len(all_prob_types)):
     all_prob_js = save_prob(all_prob_types[p], all_prob_type_names[p], all_prob_js)
     all_prob_np[all_prob_type_names[p]] = all_prob_types[p]
 # Write numpy file
-np.savez(f'./all_prob.npz', all_prob=all_prob_np)
+np.savez(f'./all_prob_{args.num_permuted}.npz', all_prob=all_prob_np)
 # Convert to json strings
 all_prob_json_string = json.dumps(all_prob_js)
 # Write to js script
-js_fname = f'./all_prob.js'
+js_fname = f'./all_prob_{args.num_permuted}.js'
 js_fid = open(js_fname, 'w')
 js_fid.write('var all_problems = ' + all_prob_json_string)
 js_fid.close()

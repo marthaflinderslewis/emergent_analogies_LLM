@@ -20,6 +20,8 @@ def hide_top_right(ax):
 parser = argparse.ArgumentParser()
 parser.add_argument('--sentence', action='store_true', help="Present problem in sentence format.")
 parser.add_argument('--noprompt', action='store_true', help="Present problem without prompt.")
+parser.add_argument('--num_permuted', help="Give a number of letters in the alphabet that have been permuted from 2 to 26", type=int)
+
 args = parser.parse_args()
 
 # Load data
@@ -28,11 +30,11 @@ if args.sentence:
 elif args.noprompt:
 	all_responses = np.load('./gpt3_letterstring_results_noprompt.npz')['all_prob_type_responses']
 else:
-	all_responses = np.load('./gpt3_letterstring_results.npz')['all_prob_type_responses']
+	all_responses = np.load(f'./gpt3_letterstring_results_{args.num_permuted}.npz')['all_prob_type_responses']
 N_prob_types = all_responses.shape[0]
 N_trials_per_prob_type = all_responses.shape[1]
 # Load problems
-all_prob = np.load('./all_prob.npz', allow_pickle=True)['all_prob']
+all_prob = np.load(f'./all_prob_{args.num_permuted}.npz', allow_pickle=True)['all_prob']
 prob_types = builtins.list(all_prob.item().keys())
 
 # All possible combinations of transformations and generalizations
@@ -128,11 +130,11 @@ all_prob_realworld = np.array(all_prob_realworld)
 
 # Create directory for results
 if args.sentence:
-	results_dir = './GPT3_results_sentence/'
+	results_dir = f'./GPT3_results_sentence_{args.num_permuted}/'
 elif args.noprompt:
-	results_dir = './GPT3_results_noprompt/'
+	results_dir = f'./GPT3_results_noprompt_{args.num_permuted}/'
 else:
-	results_dir = './GPT3_results/'
+	results_dir = f'./GPT3_results_{args.num_permuted}/'
 check_path(results_dir)
 
 # Save individual trial results

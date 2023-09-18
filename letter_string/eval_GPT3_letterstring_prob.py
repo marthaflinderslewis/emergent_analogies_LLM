@@ -9,17 +9,19 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--sentence', action='store_true', help="Present problem in sentence format.")
 parser.add_argument('--noprompt', action='store_true', help="Present problem without prompt.")
+parser.add_argument('--num_permuted', help="give a number of letters in the alphabet to permute from 2 to 26", type=int)
+
 args = parser.parse_args()
 
 # GPT-3 settings
-openai.api_key = "FILL_IN_API_KEY_HERE"
+openai.api_key = "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"
 if args.sentence:
 	kwargs = { "engine":"text-davinci-003", "temperature":0, "max_tokens":40, "echo":False, "logprobs":1, }
 else:
 	kwargs = { "engine":"text-davinci-003", "temperature":0, "max_tokens":40, "stop":"\n", "echo":False, "logprobs":1, }
 
 # Load all problems
-all_prob = np.load('./all_prob.npz', allow_pickle=True)['all_prob']
+all_prob = np.load(f'./all_prob_{args.num_permuted}.npz', allow_pickle=True)['all_prob']
 prob_types = builtins.list(all_prob.item().keys())
 N_prob_types = len(prob_types)
 
@@ -81,7 +83,7 @@ for p in range(N_prob_types):
 		prob_type_responses.append(response['choices'][0]['text'])	
 	all_prob_type_responses.append(prob_type_responses)
 	# Save
-	save_fname = './gpt3_letterstring_results'
+	save_fname = f'./gpt3_letterstring_results_{args.num_permuted}'
 	if args.sentence:
 		save_fname += '_sentence'
 	if args.noprompt:
