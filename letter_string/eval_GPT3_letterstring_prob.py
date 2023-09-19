@@ -14,7 +14,7 @@ parser.add_argument('--num_permuted', help="give a number of letters in the alph
 args = parser.parse_args()
 
 # GPT-3 settings
-openai.api_key = "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"
+openai.api_key = "API KEY HERE"
 if args.sentence:
 	kwargs = { "engine":"text-davinci-003", "temperature":0, "max_tokens":40, "echo":False, "logprobs":1, }
 else:
