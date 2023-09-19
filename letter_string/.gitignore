@@ -1,3 +1,4 @@
-*.npz
+
 *.png
 *.js
+all_prob.npz
